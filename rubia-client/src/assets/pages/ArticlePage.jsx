@@ -2,32 +2,27 @@ import { useParams } from 'react-router-dom';
 import Button from '../components/Button';
 import articles from '../article-content.js';
 
-///lolol
+//reused this
 import NotFoundPage from './NotFoundPage.jsx';
 
 function ArticlePage() {
   const { name } = useParams();
 
-  const article = articles.find(a => a.name === name);
+  const article = articles.find(article => article.name === name);
 
-
- if (!article) {
+  if (!article) {
     return (
       <div className="relative flex flex-col w-full min-h-screen bg-[#f0f2f5]">
         
-        <div className="flex justify-start pt-8 px-8 bg-[#f0f2f5]">
-          <Button 
-            to="/articles" 
-            className="z-20 bg-[#3b4cca] text-black px-6 py-2.5 border-b-4 border-black text-xs font-black uppercase italic active:border-b-0 active:translate-y-1 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
-          >
-            ← Back to Social
-          </Button>
-        </div>
+       <div className="flex-1 flex flex-col items-center justify-center">
+          <div className="flex justify-center pb-8 pt-10">
+           <Button to="/articles"className="z-20 bg-[#3b4cca] text-black px-6 py-2.5 border-b-4 border-black text-xs font-black uppercase italic active:border-b-0 active:translate-y-1 transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+               ← Back to PokeSocial Feed
+           </Button>
+          </div>
 
-        <div className="-mt-16 flex-1 flex flex-col justify-center">
           <NotFoundPage />
-        </div>
-        
+          </div>
       </div>
     );
   }
