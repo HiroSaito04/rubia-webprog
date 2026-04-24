@@ -2,38 +2,56 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 // HomePage Structure
 //LabAct02
-import Layout from './assets/components/Layout';
-import ArticlePage from './assets/pages/ArticlePage';
-import HomePage from './assets/pages/HomePage';
-import AboutPage from './assets/pages/AboutPage';
+import Layout from './layouts/Layout';
+import ArticlePage from './pages/LandingPages/ArticlePage';
+import HomePage from './pages/LandingPages/HomePage';
+import AboutPage from './pages/LandingPages/AboutPage';
 
 //LabAct3
-import ArticleListPage from './assets/pages/ArticleListPage';
-import NotFoundPage from './assets/pages/NotFoundPage';
+import ArticleListPage from './pages/LandingPages/ArticleListPage';
+import NotFoundPage from './pages/NotFoundPage';
+
+//LabAct4
+import AuthLayout from './layouts/AuthLayout';
+import SignInPage from './pages/AuthPages/SignInPage';
+import SignUpPage from './pages/AuthPages/SignUpPage';
 
 const routes = [
   {
     path: '/',
     element: <Layout />,
-    
     errorElement: <NotFoundPage />,
-
     children: [
       {
-        path: '/',
+        path: '',
         element: <HomePage />,
       },
       {
-        path: '/about',
+        path: 'about',
         element: <AboutPage />,
       },
-       {
-        path: '/articles',
+      {
+        path: 'articles',
         element: <ArticleListPage />,
       },
       {
-        path: '/articles/:name',
+        path: 'articles/:name',
         element: <ArticlePage />,
+      },
+    ],
+  },
+{
+  path: 'auth/',
+    element: <AuthLayout />,
+    errorElement: <NotFoundPage />,
+    children: [
+      {
+        path: 'signin',
+        element: <SignInPage />,
+      },
+      {
+        path: 'signup',
+        element: <SignUpPage />,
       },
     ],
   },
@@ -50,3 +68,4 @@ function App() {
 }
 
 export default App;
+
