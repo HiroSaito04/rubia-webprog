@@ -1,3 +1,15 @@
+.App {
+   min-height: 100vh;
+    display: flex;
+     align-items: center;
+      justify-content: center;
+     }
+
+.App-header { 
+  text-align: center;
+    padding: 2rem;
+   }
+
 .counter {
   font-size: 16px;
   padding: 5px 10px;
