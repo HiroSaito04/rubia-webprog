@@ -16,6 +16,12 @@ import AuthLayout from './layouts/AuthLayout';
 import SignInPage from './pages/AuthPages/SignInPage';
 import SignUpPage from './pages/AuthPages/SignUpPage';
 
+//LabAct4
+import DashLayout from './layouts/DashLayout';
+import DashboardPage from './pages/DashboardPage/DashboardPage';
+import ReportsPage from './pages/DashboardPage/ReportsPage';
+import UsersPage from './pages/DashboardPage/UsersPage';
+
 const routes = [
   {
     path: '/',
@@ -55,6 +61,25 @@ const routes = [
       },
     ],
   },
+  {
+   path: 'dashboard/',
+    element: <DashLayout />,
+    errorElement: <NotFoundPage />,
+    children: [
+      {
+        path: '',
+        element: <DashboardPage />,
+      },
+      {
+        path: 'reports',
+        element: <ReportsPage />,
+      },
+      {
+        path: 'users',
+        element: <UsersPage />,
+      },
+    ],
+  }
 ];
 
 const router = createBrowserRouter(routes);
