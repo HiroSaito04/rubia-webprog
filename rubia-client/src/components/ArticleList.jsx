@@ -34,7 +34,7 @@ const ArticleList = ({ articles }) => {
               {/* Article Content */}
               <div className="flex-grow">
                 <span className={`inline-block rounded-md border-2 border-zinc-900 bg-white px-2 py-0.5 text-[9px] font-black uppercase shadow-[2px_2px_0px_0px_rgba(24,24,27,1)]`}>
-                  {article.type}
+                  {article.date}
                 </span>
                 <h3 className="mt-3 text-xl font-black text-zinc-900 leading-tight italic uppercase tracking-tighter">
                   {article.title}

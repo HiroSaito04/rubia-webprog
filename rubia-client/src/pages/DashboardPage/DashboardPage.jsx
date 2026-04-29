@@ -1,163 +1,165 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React from 'react';
+import { Typography, Box, Paper, Grid } from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
-
-import { DataGrid } from '@mui/x-data-grid';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
-
-import { Gauge } from '@mui/x-charts/Gauge';
-import { Typography, Card, CardContent, Button } from '@mui/material';
 import { PieChart } from '@mui/x-charts/PieChart';
+import { DataGrid } from '@mui/x-data-grid';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  {
-    field: 'firstName',
-    headerName: 'First name',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'lastName',
-    headerName: 'Last name',
-    width: 150,
-    editable: true,
-  },
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    width: 110,
-    editable: true,
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
-  },
-];
+const DATA_STORE = {
+  // Table Rows
+  userRows: [
+    { id: 1, lastName: 'Tkhrst', firstName: 'Mickael', age: 20 },
+    { id: 2, lastName: 'Tajiri', firstName: 'Satoshi', age: 31 },
+    { id: 3, lastName: 'Ketchum', firstName: 'Ash', age: 12 },
+    { id: 4, lastName: 'Oak', firstName: 'Gary ', age: 12 },
+    { id: 5, lastName: 'Shirona ', firstName: 'Cynthia ', age: 35 },
+    { id: 6, lastName: 'Juniper', firstName: 'Professor Aurea' , age: 40 },
+    { id: 7, lastName: 'Williams', firstName: 'Misty', age: 13 },
+    { id: 8, lastName: 'Stone', firstName: 'Steven', age: 25 },
+    { id: 9, lastName: 'Harrison', firstName: 'Brock', age: 15 },
+  ],
 
-export const rows = [
-  { id: 1, lastName: 'Tkhrst', firstName: 'Mickael', age: 14 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-];
+  userColumns: [
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'firstName', headerName: 'First Name', width: 130 },
+    { field: 'lastName', headerName: 'Last Name', width: 130 },
+    { field: 'age', headerName: 'Age', type: 'number', width: 90 },
+    {
+      field: 'fullName',
+      headerName: 'Full Name',
+      width: 160,
+      valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+    },
+  ],
+
+  // Data from Reports
+  monthlyVolume: {
+    months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    posts: [4, 6, 12, 8, 5, 10]
+  },
+  userDistribution: [
+    { id: 0, value: 10, label: 'Admins', color: '#1A1A1A' },
+    { id: 1, value: 100, label: 'Trainers', color: '#ff1c1c' },
+    { id: 2, value: 20, label: 'Professors', color: '#00E5FF' },
+  ],
+
+  // Map Config
+  mapCoords: [14.604253, 120.994314], // NU Manila
+  mapLabel: "RotomPC Command Center"
+};
 
 function DashboardPage() {
-  const location = useLocation();
+  
+  // Logic Calculations
+  const totalUsers = DATA_STORE.userRows.length;
+  const usersWithAge = DATA_STORE.userRows.filter((r) => r.age !== null);
+  const averageAge = usersWithAge.length > 0 
+    ? (usersWithAge.reduce((sum, r) => sum + r.age, 0) / usersWithAge.length).toFixed(1)
+    : 0;
+
+  // Visual Styling Constants (Design preserved)
+  const PAPER_STYLE = {
+    p: 3,
+    border: '2px solid #1A1A1A',
+    boxShadow: '4px 4px 0px #000',
+    borderRadius: 2,
+    bgcolor: '#fff'
+  };
 
   return (
-    <>
-      <Typography variant="h4" gutterBottom>
-        Dashboard
+    <Box sx={{ p: 1 }}>
+      <Typography variant="h4" sx={{ fontWeight: 900, mb: 4, fontStyle: 'italic', textTransform: 'uppercase' }}>
+        DASHBOARD <span style={{ color: '#cc0000' }}>OVERVIEW</span>
       </Typography>
-      {/* Summary Section */}
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ mb: 4 }} display="flex">
-        <Card>
-          <CardContent>
-            <Typography variant="h6">Total Users</Typography>
-            <Typography variant="h4">{rows.length}</Typography>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <Typography variant="h6">Average Age</Typography>
-            <Typography variant="h4">
-              {
-                (rows.reduce((sum, row) => sum + (row.age || 0), 0) /
-                rows.filter((row) => row.age !== null).length).toFixed(1)
-              }
-            </Typography>
-          </CardContent>
-        </Card>
-      </Stack>
 
-      {/* Gauges */}
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} sx={{ mb: 4 }}>
-        <Gauge width={100} height={100} value={50} />
-        <Gauge width={100} height={100} value={50} startAngle={-90} endAngle={90} />
-        <Gauge width={100} height={100} value={50} valueMin={10} valueMax={60} />
-      </Stack>
+      {/* 1. Summary Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper sx={PAPER_STYLE}>
+            <Typography variant="overline" sx={{ fontWeight: 'bold', color: 'text.secondary' }}>Total Users</Typography>
+            <Typography variant="h3" sx={{ fontWeight: 900 }}>{totalUsers}</Typography>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} sm={6} md={3}>
+          <Paper sx={PAPER_STYLE}>
+            <Typography variant="overline" sx={{ fontWeight: 'bold', color: 'text.secondary' }}>Avg. Age</Typography>
+            <Typography variant="h3" sx={{ fontWeight: 900, color: '#cc0000' }}>{averageAge}</Typography>
+          </Paper>
+        </Grid>
+      </Grid>
 
-      {/* Charts */}
-      <Stack direction={{ xs: 'column', md: 'row' }} spacing={3} sx={{ mb: 4 }}>
-        <BarChart
-          series={[
-            { data: [35, 44, 24, 34], label: 'Series 1' },
-            { data: [51, 6, 49, 30], label: 'Series 2' },
-          ]}
-          height={290}
-          xAxis={[{ data: ['Q1', 'Q2', 'Q3', 'Q4'], scaleType: 'band', label: 'Quarters' }]}
-          title="Quarterly Sales"
-        />
-        <PieChart
-          series={[
-            {
-              data: [
-                { id: 0, value: 10, label: 'Series A' },
-                { id: 1, value: 15, label: 'Series B' },
-                { id: 2, value: 20, label: 'Series C' },
-              ],
-            },
-          ]}
-          width={400}
-          height={200}
-        />
-      </Stack>
+      {/* 2. Charts Section (Replaced Content, Preserved Design) */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} lg={7}>
+          <Paper sx={PAPER_STYLE}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>MONTHLY POSTS (2026)</Typography>
+            <Box sx={{ width: '100%' }}>
+              <BarChart
+                xAxis={[{ scaleType: 'band', data: DATA_STORE.monthlyVolume.months }]}
+                series={[{ data: DATA_STORE.monthlyVolume.posts, label: 'Articles', color: '#1A1A1A' }]}
+                height={300}
+                width={600}
+                margin={{ top: 20, bottom: 30, left: 40, right: 10 }}
+              />
+            </Box>
+          </Paper>
+        </Grid>
+        <Grid item xs={12} lg={5}>
+          <Paper sx={{ ...PAPER_STYLE, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', width: '100%', mb: 2 }}>USER ROLES</Typography>
+            <PieChart
+              series={[{
+                data: DATA_STORE.userDistribution,
+                innerRadius: 50,
+                paddingAngle: 5,
+              }]}
+              height={300}
+              width={600}
+            />
+          </Paper>
+        </Grid>
+      </Grid>
 
-      {/* DataGrid */}
-      <Typography variant="h5" gutterBottom>
-        Users Overview
-      </Typography>
-      <Box sx={{ height: 400, width: '100%', mb: 2 }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          experimentalFeatures={{ newEditingApi: true }}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 5,
-              },
-            },
-          }}
-          pageSizeOptions={[5]}
-          checkboxSelection
-          disableRowSelectionOnClick
-        />
-      </Box>
-
-      {/* React Leaflet Map */}
-      <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-        Location Map
-      </Typography>
-      <Box sx={{ height: 500, width: '100%' }}>
-        <MapContainer center={[14.604253, 120.994314]} zoom={13} style={{ height: '100%', width: '100%' }}>
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      {/* 3. DataGrid Section */}
+      <Paper sx={{ ...PAPER_STYLE, mb: 4 }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>USER OVERVIEW</Typography>
+        <Box sx={{ height: 400, width: '100%' }}>
+          <DataGrid
+            rows={DATA_STORE.userRows}
+            columns={DATA_STORE.userColumns}
+            initialState={{ pagination: { paginationModel: { pageSize: 5 } } }}
+            pageSizeOptions={[5]}
+            checkboxSelection
+            disableRowSelectionOnClick
+            sx={{ border: 'none' }}
           />
-          <Marker position={[14.604253, 120.994314]}>
-            <Popup>
-              National University - Manila <br />
-              551 M.F. Jhocson St, Sampaloc, Manila, 1008 Metro Manila
-            </Popup>
-          </Marker>
-        </MapContainer>
-      </Box>
-    </>
+        </Box>
+      </Paper>
+
+      {/* 4. Map Section */}
+      <Paper sx={{ ...PAPER_STYLE, overflow: 'hidden' }}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>REGIONAL SCANNER (GPS)</Typography>
+        <Box sx={{ height: 400, width: '100%', borderRadius: 1, overflow: 'hidden', border: '1px solid #ddd' }}>
+          <MapContainer 
+            center={DATA_STORE.mapCoords} 
+            zoom={15} 
+            style={{ height: '100%', width: '100%' }}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; OpenStreetMap contributors'
+            />
+            <Marker position={DATA_STORE.mapCoords}>
+              <Popup>
+                <strong>{DATA_STORE.mapLabel}</strong> <br /> 
+                National University - Manila
+              </Popup>
+            </Marker>
+          </MapContainer>
+        </Box>
+      </Paper>
+    </Box>
   );
 }
 

@@ -70,7 +70,7 @@ function ArticlePage() {
               <div className="p-8">
                 <div className="mb-4 flex items-center gap-3">
                   <span className={`rounded-md border-2 border-zinc-900 ${article.color} px-3 py-0.5 text-[10px] font-black uppercase text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]`}>
-                    {article.type}
+                    {article.date}
                   </span>
                   <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-widest">Log Entry #{article.id}</span>
                 </div>
