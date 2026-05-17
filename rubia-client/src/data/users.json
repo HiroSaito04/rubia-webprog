@@ -1,0 +1,11 @@
+[
+  { "id": 1, "firstName": "Mickael", "lastName": "Tkhrst", "age": "20", "gender": "male", "contactNumber": "09000000001", "email": "mickael@gmail.dev", "role": "admin", "username": "mtkhrst", "password": "password123", "address": "Manila", "isActive": true },
+  { "id": 2, "firstName": "Satoshi", "lastName": "Tajiri", "age": "31", "gender": "male", "contactNumber": "09000000002", "email": "satoshi@gmail.dev", "role": "trainer", "username": "stajiri", "password": "password123", "address": "Tokyo", "isActive": true },
+  { "id": 3, "firstName": "Ash", "lastName": "Ketchum", "age": "12", "gender": "male", "contactNumber": "09000000003", "email": "ash@gmail.dev", "role": "trainer", "username": "aketchum", "password": "password123", "address": "Pallet Town", "isActive": true },
+  { "id": 4, "firstName": "Gary", "lastName": "Oak", "age": "12", "gender": "male", "contactNumber": "09000000004", "email": "gary@gmail.dev", "role": "trainer", "username": "goak", "password": "password123", "address": "Pallet Town", "isActive": true },
+  { "id": 5, "firstName": "Cynthia", "lastName": "Shirona", "age": "35", "gender": "female", "contactNumber": "09000000005", "email": "cynthia@gmail.dev", "role": "trainer", "username": "cshirona", "password": "password123", "address": "Sinnoh", "isActive": true },
+  { "id": 6, "firstName": "Professor Aurea", "lastName": "Juniper", "age": "40", "gender": "female", "contactNumber": "09000000006", "email": "juniper@gmail.dev", "role": "professor", "username": "ajuniper", "password": "password123", "address": "Unova", "isActive": true },
+  { "id": 7, "firstName": "Misty", "lastName": "Williams", "age": "13", "gender": "female", "contactNumber": "09000000007", "email": "misty@gmail.dev", "role": "trainer", "username": "mwilliams", "password": "password123", "address": "Cerulean", "isActive": true },
+  { "id": 8, "firstName": "Steven", "lastName": "Stone", "age": "25", "gender": "male", "contactNumber": "09000000008", "email": "steven@gmail.dev", "role": "trainer", "username": "sstone", "password": "password123", "address": "Hoenn", "isActive": true },
+  { "id": 9, "firstName": "Brock", "lastName": "Harrison", "age": "15", "gender": "male", "contactNumber": "09000000009", "email": "brock@gmail.dev", "role": "trainer", "username": "bharrison", "password": "password123", "address": "Pewter City", "isActive": true }
+]
