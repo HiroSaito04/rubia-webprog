@@ -1,13 +1,84 @@
+import React, { useState, useEffect } from 'react';
 import Button from '../../components/Button';
-// Import badge assets 
 import badgeA from '../../assets/res/A.png';
 import badgeB from '../../assets/res/B.png';
 import badgeC from '../../assets/res/C.png';
 import badgeD from '../../assets/res/D.png';
-// Import the Trainer Sprite
-import trainerSprite from '../../assets/res/Mike.png';
+
+const TRAINER_SPRITES = {
+  male: [
+    'https://ik.imagekit.io/ytwzizvepv/RotomPC/TrainerAvatar/Trainer03.png?updatedAt=1778900538799',
+    'https://ik.imagekit.io/ytwzizvepv/RotomPC/TrainerAvatar/Trainer01.png?updatedAt=1778900591810'
+  ],
+  female: [
+    'https://ik.imagekit.io/ytwzizvepv/RotomPC/TrainerAvatar/Trainer04.png?updatedAt=1778900558997',
+    'https://ik.imagekit.io/ytwzizvepv/RotomPC/TrainerAvatar/Trainer02.png?updatedAt=1778900610572'
+  ]
+};
 
 const AboutPage = () => {
+  const defaultGuest = { id: 'UNKNOWN', username: 'RotomPC Guest', role: 'Viewer', gender: null };
+  const [user, setUser] = useState(defaultGuest);
+  const [trainerSprite, setTrainerSprite] = useState(null);
+
+  useEffect(() => {
+    const syncProfileData = () => {
+      const storedUser = localStorage.getItem('user');
+      
+      if (!storedUser) {
+        setUser(defaultGuest);
+        setTrainerSprite(null);
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(storedUser);
+        
+        if (parsed && (parsed.id || parsed._id)) {
+          const rawGender = parsed.gender || '';
+          const userGender = rawGender.toLowerCase().trim() === 'female' ? 'female' : 'male';
+          
+          setUser({
+            id: parsed.id || parsed._id,
+            username: parsed.username || parsed.name || 'Trainer',
+            role: parsed.role || 'IT Student',
+            gender: userGender
+          });
+
+          setTrainerSprite(current => {
+            const options = TRAINER_SPRITES[userGender];
+            if (current && options.includes(current)) {
+              return current;            }
+            return options[0]; 
+          });
+
+        } else {
+          setUser(defaultGuest);
+          setTrainerSprite(null);
+        }
+      } catch (err) {
+        console.error("Authentication parsing error, resetting context state:", err);
+        setUser(defaultGuest);
+        setTrainerSprite(null);
+      }
+    };
+
+    syncProfileData();
+    window.addEventListener('storage', syncProfileData);  
+    window.addEventListener('local-auth-update', syncProfileData);
+
+    return () => {
+      window.removeEventListener('storage', syncProfileData);
+      window.removeEventListener('local-auth-update', syncProfileData);
+    };
+  }, []);
+
+  const toggleTrainerSprite = () => {
+    if (!user.gender) return;
+    const pool = user.gender === 'female' ? TRAINER_SPRITES.female : TRAINER_SPRITES.male;
+    setTrainerSprite(prev => prev === pool[0] ? pool[1] : pool[0]);
+  };
+
   const badges = [
     { img: badgeA, name: 'Zephyr Badge' },
     { img: badgeB, name: 'Hive Badge' },
@@ -27,16 +98,38 @@ const AboutPage = () => {
           {/* Full Body Sprite Stage */}
           <div className="relative group">
             <div className="relative rounded-[3rem] border-8 border-[#30a7d7] bg-[#1a1a1a] p-1 shadow-[0_20px_50px_rgba(0,0,0,0.5)] aspect-[3/4] max-w-[320px] mx-auto overflow-hidden">
-              {/* Internal Digital Screen */}
-              <div className="h-full w-full rounded-[2.5rem] bg-gradient-to-b from-[#3b4cca] to-[#2a3a9d] relative flex items-end justify-center overflow-hidden">
+              
+              {/* Background switches cleanly to full dark bg-zinc-950 when avatar is missing */}
+              <div className={`h-full w-full rounded-[2.5rem] relative flex items-end justify-center overflow-hidden transition-all duration-300 ${
+                user.id !== 'UNKNOWN' && trainerSprite 
+                  ? 'bg-gradient-to-b from-[#3b4cca] to-[#2a3a9d]' 
+                  : 'bg-zinc-950'
+              }`}>
                 
-                {/* The Sprite: Full Body Display */}
-                <img 
-                  src={trainerSprite} 
-                  alt="Trainer" 
-                  className="relative z-20 h-[100%] w-auto object-contain transition-transform duration-700 group-hover:scale-115"
-                  style={{ imageRendering: 'pixelated' }}
-                />
+                {/* CONDITIONAL RENDERING STAGE: Sprite Display vs Unlogged Fallback Banner Container */}
+                {user.id !== 'UNKNOWN' && trainerSprite ? (
+                  <img 
+                    src={trainerSprite} 
+                    alt="Trainer" 
+                    onClick={toggleTrainerSprite}
+                    className="pb-5 relative z-20 h-[95%] w-auto object-contain transition-transform duration-700 group-hover:scale-105 cursor-pointer"
+                    style={{ imageRendering: 'pixelated' }}
+                  />
+                ) : (
+                  <Button 
+                    to="/auth/signup"
+                    className="absolute inset-0 z-20 flex flex-col items-center justify-center p-6 text-center group/btn border-none bg-zinc-950 hover:bg-zinc-900 transition-colors duration-300 text-white"
+                  >
+                    {/* FIXED: Explicit text white definitions applied across title and description lines inside this container block */}
+                    <h2 className="text-2xl font-black text-white uppercase italic tracking-tighter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] animate-bounce leading-tight">
+                      <span className="text-yellow-300">Are you a boy <br /> or a girl?</span>
+                    </h2>
+                    
+                    <p className="mt-4 bg-zinc-900 border border-white/30 px-4 py-1.5 rounded-md text-white font-black uppercase tracking-widest text-[10px] shadow-md group-hover/btn:border-white/60 transition-colors">
+                      Click to initialize
+                    </p>
+                  </Button>
+                )}
 
                 {/* Digital Stage Shadow */}
                 <div className="absolute bottom-6 h-8 w-40 rounded-[100%] bg-black/40 blur-md z-10"></div>
@@ -55,14 +148,14 @@ const AboutPage = () => {
             <div className="inline-flex items-center gap-3 rounded-lg bg-zinc-900/30 px-4 py-2 backdrop-blur-md border border-white/10">
               <span className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></span>
               <p className="text-[12px] font-black uppercase tracking-[0.3em] text-yellow-300">
-                Trainer Profile: ID #2023-103514
+                Trainer Profile: ID #{user.id}
               </p>
             </div>
 
             <h1 className="text-5xl font-black leading-none sm:text-5xl drop-shadow-lg italic uppercase tracking-tighter">
-              TKHRST - MICKAEL <br />
+              {user.username} <br />
               <span className="text-2xl sm:text-3xl font-black text-yellow-400 drop-shadow-md">
-                Game Developer
+                {user.role}
               </span>
             </h1>
 
@@ -71,10 +164,10 @@ const AboutPage = () => {
             </p>
 
             <div className="pt-6 flex flex-wrap gap-4">
-              <Button to="/" className="bg-[#ffcb05] hover:bg-[#ffde00] text-[#3b4cca] border-[#3b4cca] border-b-[6px] font-black px-10 py-4 text-lg transform hover:-translate-y-1 transition-all active:translate-y-0 active:border-b-0">
+             <Button to="/" variant="primary" size="md" className="w-full sm:w-auto">
                 OPEN POKÉDEX
               </Button>
-              <Button to="/articles" className="bg-white hover:bg-zinc-100 text-zinc-900 border-zinc-900 border-b-[6px] font-black px-10 py-4 text-lg transform hover:-translate-y-1 transition-all active:translate-y-0 active:border-b-0">
+              <Button to="/articles" variant="secondary" size="md" className="w-full sm:w-auto">
                 POKÉSOCIAL
               </Button>
             </div>
@@ -131,7 +224,7 @@ const AboutPage = () => {
           {/* Badge Showcase Sidebar */}
           <aside className="rounded-[3rem] border-4 border-zinc-900 bg-[#3b4cca] p-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,0.1)] text-white">
             <div className="flex items-center justify-between mb-8">
-               <h2 className="text-2xl font-black uppercase italic tracking-tighter tracking-widest">Gym Badges</h2>
+               <h2 className="text-2xl font-black uppercase italic tracking-tighter">Gym Badges</h2>
                <div className="h-10 w-10 rounded-full bg-[#ffcb05] border-4 border-zinc-900 shadow-md"></div>
             </div>
             

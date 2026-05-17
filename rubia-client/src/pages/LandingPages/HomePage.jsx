@@ -1,6 +1,4 @@
 import Button from '../../components/Button';
-// Import assets (assuming Vite/standard React build tool)
-// Adjusting the paths to go up one level from 'pages' to 'assets'
 import bulbasaurImg from '../../assets/res/bulbasaur.png';
 import charmanderImg from '../../assets/res/charmander.png';
 import squirtleImg from '../../assets/res/squirtle.png';
@@ -27,14 +25,19 @@ const HomePage = () => {
               <span className="text-zinc-900 underline decoration-yellow-400 underline-offset-8">'Em All!</span>
             </h1>
             
-            <p className="max-w-md text-lg font-bold leading-relaxed text-red-100 sm:text-xl border-l-4 border-yellow-400 pl-4">
-              Access the most advanced Pokémon database ever created. Track your journey from Pallet Town to the Hall of Fame.
+            <p className="max-w-md text-lg font-bold leading-relaxed text-red-100 sm:text-xl border-l-4 border-yellow-400 pl-4 whitespace-pre-line">
+              {`Welcome to the most advanced Pokémon database ever created. \nPowered by Rotom-Dex with real-time map mapping, data scanning, and field analysis.`}
             </p>
             
             <div className="flex flex-wrap gap-4 pt-4">
-              <Button to="/about" variant="primary" className="h-14 px-10 text-sm shadow-[6px_6px_0px_0px_rgba(59,76,202,1)]">
-                SEE TRAINER ID
-              </Button>
+              <Button 
+                    to="/about" 
+                    variant="primary" 
+                    size="md" 
+                    className="w-full sm:w-auto"
+                  >
+                    SEE TRAINER ID
+                  </Button>
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20">
                 <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse"></div>
                 <span className="text-[10px] font-black uppercase tracking-widest">Network Online</span>
@@ -54,7 +57,7 @@ const HomePage = () => {
                       <img 
                         src={pikachuImg} 
                         alt="Partner Pikachu" 
-                        className="relative z-10 w-32 h-32 object-contain animate-bounce [animation-duration:3s]" 
+                        className="relative z-50 w-32 h-32 object-contain animate-bounce [animation-duration:3s]" 
                         style={{ imageRendering: 'pixelated' }}
                       />
                       <span className="absolute bottom-2 text-white font-black italic text-[10px] tracking-widest drop-shadow-md">PIKACHU</span>
@@ -78,11 +81,11 @@ const HomePage = () => {
       <section className="mx-auto -mt-12 w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: 'Gym Badges', val: '08', color: 'bg-blue-500', icon: '📛' },
-            { label: 'Pokédex Entry', val: '151', color: 'bg-yellow-500', icon: '📖' },
-            { label: 'Elite Four Wins', val: '04', color: 'bg-red-500', icon: '🏆' },
-            { label: 'Rare Candies', val: '12', color: 'bg-green-500', icon: '🍬' },
-          ].map((stat, i) => (
+            { label: 'National Dex', val: '1025', color: 'bg-indigo-600', icon: '🌐' },
+            { label: 'Regional Dex Entry', val: '151', color: 'bg-red-500', icon: '🗺️' },
+            { label: 'Discovered Regions', val: '09', color: 'bg-emerald-500', icon: '🏔️' },
+            { label: 'Types', val: '18', color: 'bg-amber-500', icon: '🧬' }
+        ].map((stat, i) => (
             <div key={i} className="flex items-center gap-4 rounded-2xl border-4 border-zinc-900 bg-white p-5 shadow-[6px_6px_0px_0px_rgba(24,24,27,1)] transition-all hover:-translate-y-1">
               <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border-2 border-zinc-900 ${stat.color} text-2xl shadow-[2px_2px_0px_0px_rgba(24,24,27,1)]`}>
                 {stat.icon}
@@ -158,8 +161,11 @@ const HomePage = () => {
                 <p className="mt-4 text-sm font-bold leading-relaxed text-zinc-600">
                   {poke.desc}
                 </p>
-
-                <Button className={`mt-8 w-full border-zinc-900 border-b-4 font-black rounded-xl italic transition-all active:border-b-0 active:translate-y-1`}>
+                <Button 
+                  variant="secondary" 
+                  size="md" 
+                  className="mt-8 w-full"
+                >
                   OPEN DATA LOG
                 </Button>
               </div>
@@ -171,7 +177,7 @@ const HomePage = () => {
       <footer className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 pb-10">
         <div className="rounded-2xl border-4 border-dashed border-zinc-400 p-8 text-center">
            <p className="text-[10px] font-black uppercase tracking-[0.5em] text-zinc-400">
-             End of Current Database // Update via PokeSocial Terminal
+             End of Current Database
            </p>
         </div>
       </footer>

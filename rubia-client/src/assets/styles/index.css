@@ -99,3 +99,32 @@ code {
   border-radius: 4px;
   color: var(--text-h);
 }
+
+/* Tailwind v4 Pre-compiled Utility Safeguard Options */
+@utility bg-pink-500 {
+  background-color: #ec4899;
+}
+@utility bg-blue-500 {
+  background-color: #3b82f6;
+}
+@utility bg-yellow-400 {
+  background-color: #facc15;
+}
+@utility bg-purple-600 {
+  background-color: #9333ea;
+}
+@utility bg-indigo-800 {
+  background-color: #3730a3;
+}
+@utility bg-green-600 {
+  background-color: #16a34a;
+}
+@utility bg-orange-600 {
+  background-color: #ea580c;
+}
+@utility bg-cyan-400 {
+  background-color: #22d3ee;
+}
+@utility bg-zinc-500 {
+  background-color: #71717a;
+}

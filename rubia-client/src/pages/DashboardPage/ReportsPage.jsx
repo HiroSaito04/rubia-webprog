@@ -97,7 +97,6 @@ function ReportsPage() {
     win.focus();
     win.print();
   };
-  //buttons style
   const buttonStyle = {
   fontWeight: 700,
   borderRadius: 2,
@@ -119,12 +118,6 @@ const primaryButton = {
   '&:hover': {
     bgcolor: '#a30000',
   },
-};
-
-const outlineButton = {
-  ...buttonStyle,
-  bgcolor: '#fff',
-  color: '#1A1A1A',
 };
 
   return (
@@ -149,8 +142,8 @@ const outlineButton = {
 
         <Stack direction="row" spacing={1.5} flexWrap="wrap">
          <Button sx={primaryButton}>Generate</Button>
-         <Button sx={outlineButton} onClick={handlePrint}>Export</Button>
-         <Button sx={outlineButton}>Filter</Button>
+         <Button sx={primaryButton} onClick={handlePrint}>Export</Button>
+         <Button sx={primaryButton}>Filter</Button>
         </Stack>
       </Stack>
 

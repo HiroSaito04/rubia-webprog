@@ -1,4 +1,3 @@
-// rubia-client\src\layouts\DashLayout.jsx
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { styled, useTheme, alpha } from "@mui/material/styles";
@@ -38,6 +37,8 @@ const dashboardNavItems = [
   { label: "Dashboard", title: "RotomPC Dashboard", to: "/dashboard", icon: DashboardIcon },
   { label: "Reports", title: "RotomPC Analytics & Reports", to: "/dashboard/reports", icon: AssessmentIcon },
   { label: "Users", title: "RotomPC User Management", to: "/dashboard/users", icon: PeopleIcon },
+  { label: "Articles", title: "RotomPC Article Management", to: "/dashboard/articles", icon: AssessmentIcon },
+
 ];
 
 const openedMixin = (theme) => ({
@@ -66,7 +67,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  height: '84px', // Increased to accommodate the hardware strip height
+  height: '84px', 
   ...theme.mixins.toolbar,
 }));
 
@@ -74,7 +75,7 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
 })(({ theme, open }) => ({
   zIndex: theme.zIndex.drawer + 1,
-  backgroundColor: '#f3f4f6', // Match NavBar background
+  backgroundColor: '#f3f4f6',
   color: '#000',
   boxShadow: 'none',
   borderBottom: '6px solid #1A1A1A',
@@ -166,6 +167,7 @@ const DashLayout = () => {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const role = localStorage.getItem('role');
   const navigate = useNavigate();
 
   const activeItem = dashboardNavItems.find(item => item.to === location.pathname);
@@ -173,6 +175,10 @@ const DashLayout = () => {
 
   const handleDrawerToggle = () => setOpen(!open);
   const handleLogout = () => navigate("/");
+
+  if (role === 'trainer') {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#e5e7eb" }}>
@@ -258,7 +264,7 @@ const DashLayout = () => {
           </IconButton>
         </DrawerHeader>
         
-        <List sx={{ px: 1 }}>
+        <List sx={{ px: 1, pt: 4 }}>
           {dashboardNavItems.map(({ label, to, icon: Icon }) => (
             <ListItem key={to} disablePadding sx={{ display: "block", mb: 1 }}>
               <ListItemButton

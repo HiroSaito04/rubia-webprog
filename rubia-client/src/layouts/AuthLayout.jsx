@@ -1,9 +1,8 @@
-import { Outlet , useLocation} from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 
 const AuthLayout = () => {
-  const imageLocation = useLocation();
+  const location = useLocation(); 
 
-  //both personal artworks
   const loginImg = "https://ik.imagekit.io/ytwzizvepv/RotomPC/Klefki-LogIn.png?updatedAt=1775751142800";
   const signupImg = "https://ik.imagekit.io/ytwzizvepv/RotomPC/RotomPC-SignUp.png?updatedAt=1775751231924";
 
@@ -11,24 +10,29 @@ const AuthLayout = () => {
   const currentImage = isSignup ? signupImg : loginImg;
 
   return (
-    <section className="min-h-screen bg-zinc-100 text-zinc-900">
-      <div className="grid min-h-screen w-full lg:grid-cols-[1fr_0.95fr]">
+    <section className="h-screen max-h-screen w-full bg-zinc-100 text-zinc-900 overflow-hidden">
+      <div className="grid h-full w-full lg:grid-cols-[1fr_0.95fr]">
 
-       {/* Left/Top Half: Now entirely filled by the image */}
-      <div className="relative h-full w-full overflow-hidden border-zinc-300 lg:border-r-2 bg-zinc-200">
-        <img 
-         src={currentImage}
-         alt={isSignup ? "Sign Up Graphic" : "Klefki Login"}
-        className="h-full w-full object-cover opacity-90 transition-transform duration-700 hover:scale-105"/>
-        {/* Optional: Subtle Overlay to keep it "Techy" */}
-        <div className="absolute inset-0 bg-zinc-900/5 pointer-events-none" />
-      </div>
+        {/* Left Half: Stretches perfectly to full height, handles artwork scaling smoothly */}
+        {/* FIXED: Hidden on mobile layouts (h-0) and locked to max full container height on desktops */}
+        <div className="relative hidden h-full w- overflow-hidden border-zinc-300 lg:block lg:border-r-2 bg-zinc-200">
+          <img 
+            src={currentImage}
+            alt={isSignup ? "Sign Up Graphic" : "Klefki Login"}
+            className="absolute inset-0 h-full w-full object-cover opacity-90 transition-transform duration-700 hover:scale-105"
+            style={{ imageRendering: 'auto' }}
+          />
+          {/* Subtle Overlay to keep it "Techy" */}
+          <div className="absolute inset-0 bg-zinc-900/5 pointer-events-none" />
+        </div>
 
-        <main className="flex items-center bg-zinc-50 px-6 py-10 sm:px-10 lg:px-16">
-          <div className="mx-auto w-full max-w-md">
+        {/* Right Half: Takes care of long forms by enabling internal vertical scrolling independently */}
+        <main className="flex h-full w-full items-center bg-zinc-50 px-6 py-10 sm:px-10 lg:px-16 overflow-y-auto">
+          <div className="mx-auto w-full max-w-md my-auto">
             <Outlet />
           </div>
         </main>
+
       </div>
     </section>
   );

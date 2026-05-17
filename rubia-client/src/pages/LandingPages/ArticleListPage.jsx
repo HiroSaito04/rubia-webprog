@@ -1,12 +1,35 @@
+import React, { useState, useEffect } from 'react';
+import {useNavigate} from 'react-router-dom';
+import axios from 'axios';
+import API from '../../constants';
 import Button from '../../components/Button.jsx';
 import ArticleList from '../../components/ArticleList.jsx';
-import articles from '../../data/article-content.js';
-
 
 const ArticleListPage = () => {
+  const [articles, setArticles] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get(`${API.HOST}/articles`)
+      .then(res => {
+        const visibleArticles = res.data.filter(item => item.status === 'active');
+        setArticles(visibleArticles);
+      })
+      .catch(err => console.error("Error connecting to live server database feed", err));
+  }, []);
+
+  const handleLogOff = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('id');
+    localStorage.removeItem('role');
+    localStorage.removeItem('firstName');
+    localStorage.removeItem('user');
+    window.dispatchEvent(new Event('local-auth-update'));
+
+    navigate('/');
+  };
 
   return (
-
     <div className="flex w-full flex-col gap-8 bg-[#f8fafc] pb-12 font-sans selection:bg-[#3b4cca] selection:text-white">
       {/* Header: PokeSocial Feed Branding */}
       <section className="border-b-8 border-[#2a3a9d] bg-[#3b4cca] px-4 py-10 text-white sm:px-6 lg:px-8 shadow-inner relative overflow-hidden">
@@ -24,12 +47,21 @@ const ArticleListPage = () => {
             The #1 social hub for field reports, berry-gathering tips, and legendary sightings across all regions.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Button to="/" className="bg-[#ff1c1c] hover:bg-[#cc0000] text-black border-black border-b-4 font-black px-8 italic shadow-lg active:translate-y-1 active:border-b-0">
-              LOG OFF
-            </Button>
-            <Button className="bg-white text-[#3b4cca] border-[#3b4cca] border-b-4 font-black px-8 italic shadow-lg active:translate-y-1 active:border-b-0">
-              POST UPDATE
-            </Button>
+            <div className="mt-8 flex flex-wrap gap-4">
+                  <Button 
+                  onClick={handleLogOff} 
+                  variant="danger"
+                  size="md"
+                >
+                  LOG OFF
+                </Button>
+                 <Button 
+                  variant="secondary"
+                  size="md"
+                >
+                  POST UPDATE
+                </Button>
+              </div>
           </div>
         </div>
       </section>
@@ -43,14 +75,27 @@ const ArticleListPage = () => {
             </div>
             <h2 className="text-2xl font-black text-zinc-900 uppercase italic tracking-tighter">Trending Reports</h2>
           </div>
-          <div className="flex gap-2">
-             <button className="rounded-lg bg-zinc-200 px-4 py-2 text-[10px] font-black uppercase text-zinc-600 hover:bg-zinc-300 transition-colors">Latest</button>
-             <button className="rounded-lg bg-[#3b4cca] px-4 py-2 text-[10px] font-black uppercase text-white shadow-[2px_2px_0_0_rgba(0,0,0,0.2)]">Top Rated</button>
+         <div className="flex gap-2">
+            <Button 
+              variant="secondary" 
+              size="sm"
+              className="px-4 py-2" // Kept to maintain your specific compact layout spacing
+            >
+              Latest
+            </Button>
+            
+            <Button 
+              variant="primary" 
+              size="sm"
+              className="px-4 py-2 bg-[#3b4cca] text-white border-zinc-900 hover:bg-[#2a3a9d]" 
+            >
+              Top Rated
+            </Button>
           </div>
         </div>
 
-      {/* Call Article Here*/}
-       <ArticleList articles={articles} />
+        {/* Call Article Here*/}
+        <ArticleList articles={articles} />
       </section>
 
       {/* Tip Banner */}
