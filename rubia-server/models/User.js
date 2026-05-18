@@ -1,4 +1,4 @@
-//rubia-server\models\Users.js
+//rubia-server\models\User.js
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({

@@ -25,6 +25,10 @@ import UsersPage from './pages/DashboardPage/UsersPage';
 //LabAct6
 import DashArticleListPage from './pages/DashboardPage/DashArticleListPage';
 
+//RotomDex
+import RotomDexPage from './pages/LandingPages/RotomDexPage';
+import PokemonPage from './pages/LandingPages/PokemonPage';
+
 const routes = [
   {
     path: '/',
@@ -46,6 +50,14 @@ const routes = [
       {
         path: 'articles/:name',
         element: <ArticlePage />,
+      },
+      {
+        path: 'pokedex',
+        element: <RotomDexPage />,
+      },
+      {
+        path: 'pokedex/:name',
+        element: <PokemonPage />,
       },
     ],
   },
