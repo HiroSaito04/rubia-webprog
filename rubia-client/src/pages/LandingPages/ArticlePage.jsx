@@ -1,12 +1,14 @@
+// rubia-client\src\pages\ArticlePage\ArticlePage.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-import API from '../../constants';
 import Button from '../../components/Button.jsx';
 import NotFoundPage from '../NotFoundPage.jsx';
 
+// Import your centralized article service layer
+import * as articleService from '../../services/ArticleService';
+
 function ArticlePage() {
-   const { name } = useParams(); 
+  const { name } = useParams(); 
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,14 +20,12 @@ function ArticlePage() {
       return;
     }
 
-    axios.get(`${API.HOST}/articles`)
+    articleService.fetchArticles()
       .then(res => {
-       console.log("Database Response Raw Array:", res.data);
-
-       const found = res.data.find(a => String(a.name).toLowerCase() === String(name).toLowerCase());
+        console.log("Database Response Raw Array:", res.data);
+        const found = res.data.find(a => String(a.name).toLowerCase() === String(name).toLowerCase());
         
         console.log("Matched Document Object Result:", found);
-        
         setArticle(found);
         setLoading(false);
       })
@@ -61,7 +61,6 @@ function ArticlePage() {
   return (
     <div className="font-sans selection:bg-yellow-400">
       <main className="mx-auto max-w-5xl px-4 py-8 pt-25">
-        
         {/* Secondary Back Action */}
         <div className="mb-8">
           <Button to="/articles" variant="secondary" size="sm">
@@ -136,15 +135,12 @@ function ArticlePage() {
           </div>
         </div>
         
-      <div className="pt-20">
-      <Button to="/articles" variant="secondary" size="md" className=" rounded-none">
-        Close Report
-      </Button>
-      </div>
+        <div className="pt-20">
+          <Button to="/articles" variant="secondary" size="md" className="rounded-none">
+            Close Report
+          </Button>
+        </div>
       </main>
-
-      
-
     </div>
   );
 }

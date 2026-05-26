@@ -1,7 +1,8 @@
+// rubia-client\src\pages\Auth\SignInPage.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Button from '../../components/Button';
+import * as userService from '../../services/UserService';
 
 const inputClasses = 
   'mt-2 w-full rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-zinc-50';
@@ -16,7 +17,7 @@ const SignInPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-     const res = await axios.post(`${import.meta.env.VITE_API_URL}/users/login`, { 
+        const res = await userService.loginUser({ 
         email: identifier, 
         password 
       });
@@ -27,17 +28,17 @@ const SignInPage = () => {
       localStorage.setItem('firstName', res.data.firstName);
 
       const userPayload = {
-      id: res.data.id,
-      username: res.data.username,
-      role: res.data.role,
-      gender: res.data.gender
-    };
-    localStorage.setItem('user', JSON.stringify(userPayload));
-    window.dispatchEvent(new Event('local-auth-update'));
+        id: res.data.id,
+        username: res.data.username,
+        role: res.data.role,
+        gender: res.data.gender
+      };
+      localStorage.setItem('user', JSON.stringify(userPayload));
+      window.dispatchEvent(new Event('local-auth-update'));
 
       if (res.data.role === 'trainer') {
         navigate('/'); 
-       } else {
+      } else {
         navigate('/dashboard');
       }
     } catch (err) {

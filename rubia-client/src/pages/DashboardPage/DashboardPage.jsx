@@ -1,12 +1,14 @@
+// rubia-client\src\pages\Dashboard\DashboardPage.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { Typography, Box, Paper, Grid, CircularProgress } from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { DataGrid } from '@mui/x-data-grid';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import axios from 'axios';
-import API from '../../constants';
 import 'leaflet/dist/leaflet.css';
+
+// Importing your centralized user service layer
+import * as userService from '../../services/UserService';
 
 const trainerColumns = [
   { field: '_id', headerName: 'ID', width: 220 },
@@ -14,7 +16,7 @@ const trainerColumns = [
     field: 'fullName',
     headerName: 'Full Name',
     width: 200,
-    valueGetter: (params, row) => `${row.firstName || ''} ${row.lastName || ''}`,
+    valueGetter: (value, row) => `${row.firstName || ''} ${row.lastName || ''}`,
   },
   { field: 'firstName', headerName: 'First Name', width: 130 },
   { field: 'lastName', headerName: 'Last Name', width: 130 },
@@ -34,7 +36,7 @@ function DashboardPage() {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const res = await axios.get(`${API.HOST}/users`);
+        const res = await userService.fetchUsers();
         setUsers(res.data.users || []);
       } catch (err) {
         console.error("Error fetching dashboard data:", err);
@@ -150,6 +152,7 @@ function DashboardPage() {
               }]}
               height={300}
               width={400}
+              margin={{ right: 20, left: 20 }}
             />
           </Paper>
         </Grid>

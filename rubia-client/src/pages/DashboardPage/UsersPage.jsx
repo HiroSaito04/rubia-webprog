@@ -1,3 +1,4 @@
+// rubia-client\src\pages\Admin\UsersPage.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
   Box, Typography, Paper, Button, Stack, Dialog, DialogTitle, DialogContent, 
@@ -8,9 +9,10 @@ import { DataGrid } from '@mui/x-data-grid';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import DeleteIcon from '@mui/icons-material/Delete';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import API from '../../constants';
+
+// Integrated your custom centralized user service layer
+import * as userService from '../../services/UserService';
 
 const roles = ['admin', 'trainer', 'professor', 'editor'];
 const genders = ['male', 'female', 'other'];
@@ -46,12 +48,12 @@ function UsersPage() {
     } else if (userRole === 'trainer') { 
         navigate('/');
     }
-    fetchUsers();
+    fetchUsersList();
   }, [navigate]); 
   
-  const fetchUsers = async () => {
+  const fetchUsersList = async () => {
     try {
-      const res = await axios.get(`${API.HOST}/users`);
+      const res = await userService.fetchUsers();
       setUsers(res.data.users || []);
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -93,11 +95,11 @@ function UsersPage() {
         if (!payload.password || payload.password.trim() === '') {
           delete payload.password;
         }
-        await axios.put(`${API.HOST}/users/${modal.id}`, payload);
+        await userService.updateUser(modal.id, payload);
       } else {
-        await axios.post(`${API.HOST}/users`, payload);
+        await userService.createUser(payload);
       }
-      fetchUsers(); 
+      fetchUsersList(); 
       closeModal();
     } catch (err) {
       alert(err.response?.data?.message || "Failed to save user configuration updates.");
@@ -106,11 +108,12 @@ function UsersPage() {
 
   const toggleStatus = async (user) => {
     try {
-      await axios.put(`${API.HOST}/users/${user._id}`, { isActive: !user.isActive });
-      fetchUsers();
+      // Replaced direct execution payload mapping with centralized target update method
+      await userService.updateUser(user._id, { isActive: !user.isActive });
+      fetchUsersList();
     } catch (err) {
       console.error("Toggle Status Error:", err);
-      alert(err.response?.data?.message || "Failed to update account status configuration")
+      alert(err.response?.data?.message || "Failed to update account status configuration");
     }
   };
 
@@ -127,7 +130,7 @@ function UsersPage() {
     setUserToDelete(null);
   };
 
-const handleConfirmDelete = async () => {
+  const handleConfirmDelete = async () => {
     if (!userToDelete) return;
     
     if (!currentAdminId) {
@@ -135,41 +138,42 @@ const handleConfirmDelete = async () => {
     }
 
     try {
-      await axios.delete(`${API.HOST}/users/${userToDelete._id}`, {
+      // Clean target mapping pointing to the base user deletion service context
+      // pass global parameters safely if required by interceptors or manual config blocks
+      await userService.deleteUser(userToDelete._id, {
         headers: { 
           'x-user-id': currentAdminId 
         }
       });
-      fetchUsers();
+      fetchUsersList();
       handleCloseDeleteDialog();
     } catch (err) {
       alert(err.response?.data?.message || "Error permanently removing user profile registry.");
     }
   };
 
-   const buttonStyle = {
-  fontWeight: 700,
-  borderRadius: 2,
-  textTransform: 'none',
-  border: '2px solid #1A1A1A',
-  boxShadow: '3px 3px 0px #000',
-  px: 2,
-  py: 0.8,
-  '&:hover': {
-    boxShadow: '1px 1px 0px #000',
-    transform: 'translate(2px, 2px)',
-  },
-};
+  const buttonStyle = {
+    fontWeight: 700,
+    borderRadius: 2,
+    textTransform: 'none',
+    border: '2px solid #1A1A1A',
+    boxShadow: '3px 3px 0px #000',
+    px: 2,
+    py: 0.8,
+    '&:hover': {
+      boxShadow: '1px 1px 0px #000',
+      transform: 'translate(2px, 2px)',
+    },
+  };
 
-const primaryButton = {
-  ...buttonStyle,
-  bgcolor: '#cc0000',
-  color: '#fff',
-  '&:hover': {
-    bgcolor: '#a30000',
-  },
-};
-
+  const primaryButton = {
+    ...buttonStyle,
+    bgcolor: '#cc0000',
+    color: '#fff',
+    '&:hover': {
+      bgcolor: '#a30000',
+    },
+  };
 
   const openModal = (user = null) => {
     setModal({ open: true, id: user?._id || null });
