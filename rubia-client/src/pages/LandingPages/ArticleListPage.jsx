@@ -1,16 +1,18 @@
+// rubia-client\src\pages\ArticleListPage\ArticleListPage.jsx
 import React, { useState, useEffect } from 'react';
-import {useNavigate} from 'react-router-dom';
-import axios from 'axios';
-import API from '../../constants';
+import { useNavigate } from 'react-router-dom';
 import Button from '../../components/Button.jsx';
 import ArticleList from '../../components/ArticleList.jsx';
+
+// Import your centralized article service layer
+import * as articleService from '../../services/ArticleService';
 
 const ArticleListPage = () => {
   const [articles, setArticles] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get(`${API.HOST}/articles`)
+    articleService.fetchArticles()
       .then(res => {
         const visibleArticles = res.data.filter(item => item.status === 'active');
         setArticles(visibleArticles);
@@ -47,21 +49,19 @@ const ArticleListPage = () => {
             The #1 social hub for field reports, berry-gathering tips, and legendary sightings across all regions.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <div className="mt-8 flex flex-wrap gap-4">
-                  <Button 
-                  onClick={handleLogOff} 
-                  variant="danger"
-                  size="md"
-                >
-                  LOG OFF
-                </Button>
-                 <Button 
-                  variant="secondary"
-                  size="md"
-                >
-                  POST UPDATE
-                </Button>
-              </div>
+            <Button 
+              onClick={handleLogOff} 
+              variant="danger"
+              size="md"
+            >
+              LOG OFF
+            </Button>
+            <Button 
+              variant="secondary"
+              size="md"
+            >
+              POST UPDATE
+            </Button>
           </div>
         </div>
       </section>
@@ -75,11 +75,11 @@ const ArticleListPage = () => {
             </div>
             <h2 className="text-2xl font-black text-zinc-900 uppercase italic tracking-tighter">Trending Reports</h2>
           </div>
-         <div className="flex gap-2">
+          <div className="flex gap-2">
             <Button 
               variant="secondary" 
               size="sm"
-              className="px-4 py-2" // Kept to maintain your specific compact layout spacing
+              className="px-4 py-2"
             >
               Latest
             </Button>
@@ -113,7 +113,6 @@ const ArticleListPage = () => {
           </div>
         </div>
       </section>
-      
     </div>
   );
 };

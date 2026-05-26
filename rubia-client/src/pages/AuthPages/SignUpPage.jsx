@@ -1,7 +1,8 @@
+// rubia-client\src\pages\Auth\SignUpPage.jsx
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
-import React, { useState } from 'react';
-import axios from 'axios';
+import * as userService from '../../services/UserService';
 
 const inputClasses = 
   'mt-2 w-full rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-zinc-50';
@@ -26,7 +27,7 @@ const SignUpPage = () => {
       return alert("Contact must be 11 digits starting with 09");
     }
 
-   if (formData.password.length < 8) {
+    if (formData.password.length < 8) {
       return alert("Password is too short.");
     }
 
@@ -37,7 +38,7 @@ const SignUpPage = () => {
         username: formData.username.trim()
       };
 
-      await axios.post(`${import.meta.env.VITE_API_URL}/users`, payload);
+      await userService.createUser(payload);
       alert("Registration Successful!");
       navigate('/auth/signin');
     } catch (err) {
@@ -66,7 +67,7 @@ const SignUpPage = () => {
       <p className="mt-3 text-sm leading-6 text-zinc-600">
         Create your account with the same monochrome layout pattern and shared button treatment.
       </p>
-<form className="mt-8 space-y-5" onSubmit={handleSignUp}>
+      <form className="mt-8 space-y-5" onSubmit={handleSignUp}>
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label htmlFor="firstName">First Name</label>
@@ -127,25 +128,25 @@ const SignUpPage = () => {
           <input id="email" type="email" onChange={handleChange} className={inputClasses} required />
         </div>
 
-      <div>
-        <label htmlFor="password" className="text-sm font-medium text-zinc-700">
-          Password
-        </label>
-        <input 
-          id="password" 
-          type="password" 
-          onChange={handleChange} 
-          className={inputClasses} 
-          required 
-          minLength="8" 
-          maxLength="72"
-          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{}|;':/<>?,.])[A-Za-z\d!@#$%^&*()_+\-=[\]{}|;':/<>?,.]{8,72}$"
-          title="Must contain at least 8 characters, including one uppercase, one lowercase, one number, and one special character."
-        />
-        <p className="mt-2 text-xs leading-5 text-zinc-500">
-          Use 8 or more characters with a mix of letters, numbers & symbols.
-        </p>
-      </div>
+        <div>
+          <label htmlFor="password" className="text-sm font-medium text-zinc-700">
+            Password
+          </label>
+          <input 
+            id="password" 
+            type="password" 
+            onChange={handleChange} 
+            className={inputClasses} 
+            required 
+            minLength="8" 
+            maxLength="72"
+            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{}|;':/<>?,.])[A-Za-z\d!@#$%^&*()_+\-=[\]{}|;':/<>?,.]{8,72}$"
+            title="Must contain at least 8 characters, including one uppercase, one lowercase, one number, and one special character."
+          />
+          <p className="mt-2 text-xs leading-5 text-zinc-500">
+            Use 8 or more characters with a mix of letters, numbers & symbols.
+          </p>
+        </div>
 
         <Button type="submit" variant="primary" className={actionButtonClassName}>
           Create Account

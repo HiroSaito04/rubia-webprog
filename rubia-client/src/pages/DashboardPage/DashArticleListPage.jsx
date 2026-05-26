@@ -1,3 +1,4 @@
+// rubia-client\src\pages\DashboardPage\DashArticleListPage.jsx
 import React, { useState, useEffect } from 'react';
 import { 
   Box, Typography, Paper, Button, Stack, Dialog, DialogTitle, 
@@ -6,8 +7,9 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
-import axios from 'axios'; // FIXED: Using clean, standard web axios import here
-import API from '../../constants';
+
+// Import your centralized article service layer
+import * as articleService from '../../services/ArticleService';
 
 const COLOR_OPTIONS = [
   { value: 'bg-pink-500', label: 'Pink' },
@@ -36,7 +38,7 @@ function DashArticleListPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [articleToDelete, setArticleToDelete] = useState(null);
 
-  useEffect(() => { fetchArticles(); }, []);
+  useEffect(() => { loadArticles(); }, []);
 
   useEffect(() => {
     let result = articles;
@@ -52,17 +54,18 @@ function DashArticleListPage() {
     setFilteredArticles(result);
   }, [articles, searchQuery, statusFilter]);
 
-  const fetchArticles = async () => {
+  const loadArticles = async () => {
     try {
-      const res = await axios.get(`${API.HOST}/articles`);
+      const res = await articleService.fetchArticles();
       setArticles(res.data);
-    } catch (err) { console.error("Error fetching articles", err); }
+    } catch (err) { 
+      console.error("Error fetching articles:", err); 
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Generate a fallback clean slug if name field is omitted
     const calculatedSlug = form.name.trim() !== '' 
       ? form.name.trim().toLowerCase().replace(/\s+/g, '-')
       : form.title.trim().toLowerCase().replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-');
@@ -80,7 +83,6 @@ function DashArticleListPage() {
         : form.content.split('\n\n').filter(p => p.trim() !== '')
     };
 
-    // Only include the image field if a string is provided, avoiding empty string bugs
     if (form.image.trim()) {
       formattedPayload.image = form.image.trim();
     } else {
@@ -89,17 +91,30 @@ function DashArticleListPage() {
 
     try {
       if (selectedId) {
-       await axios.put(`${API.HOST}/articles/${selectedId}`, formattedPayload);
-       } else {
+        await articleService.updateArticle(selectedId, formattedPayload);
+      } else {
         delete formattedPayload._id; 
-        await axios.post(`${API.HOST}/articles`, formattedPayload);
-       }
-      fetchArticles();
+        await articleService.createArticle(formattedPayload);
+      }
+      loadArticles();
       handleClose();
     } catch (err) { 
-    console.error("Network request failed:", err.response?.data);
-       alert(err.response?.data?.message || "Error saving article data.");
-     }
+      console.error("Network request failed:", err.response?.data);
+      alert(err.response?.data?.message || "Error saving article data.");
+    }
+  };
+
+  const handleToggleStatus = async (row) => {
+    try {
+      const updatedPayload = { 
+        ...row, 
+        status: row.status === 'active' ? 'archived' : 'active' 
+      };
+      await articleService.updateArticle(row._id, updatedPayload);
+      loadArticles();
+    } catch (err) {
+      console.error("Failed to alter record status scope:", err);
+    }
   };
 
   const handleClose = () => {
@@ -121,8 +136,8 @@ function DashArticleListPage() {
   const handleConfirmDelete = async () => {
     if (!articleToDelete) return;
     try {
-      await axios.delete(`${API.HOST}/articles/${articleToDelete._id}`);
-      fetchArticles();
+      await articleService.deleteArticle(articleToDelete._id);
+      loadArticles();
       handleCloseDeleteDialog();
     } catch (err) {
       alert("Error hard deleting archive record entry.");
@@ -189,10 +204,7 @@ function DashArticleListPage() {
             size="small" 
             variant="outlined" 
             color={p.row.status === 'active' ? 'error' : 'success'}
-            onClick={() => axios.put(`${API.HOST}/articles/${p.row._id}`, { 
-              ...p.row, 
-              status: p.row.status === 'active' ? 'archived' : 'active' 
-            }).then(fetchArticles)}
+            onClick={() => handleToggleStatus(p.row)}
           >
             {p.row.status === 'active' ? 'Archive' : 'Activate'}
           </Button>
